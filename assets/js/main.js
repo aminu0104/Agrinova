@@ -175,3 +175,47 @@ new PureCounter({
   delay: 10,
   once: true,
 });
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.querySelector(".php-email-form");
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent the default form reload behavior
+
+    const formData = new FormData(form);
+
+    // Send form data to UseBasin
+    fetch(form.action, {
+      method: form.method,
+      body: formData,
+      headers: { Accept: "application/json" },
+    })
+      .then(response => {
+        if (response.ok) {
+          // Hide the form
+          form.style.display = "none";
+
+          // Create and show success message
+          const successMessage = document.createElement("div");
+          successMessage.classList.add("alert", "alert-success", "text-center", "p-4", "mt-3");
+          successMessage.innerHTML = `
+            <h3>Thank You!</h3>
+            <p>Your message has been successfully submitted. We'll get back to you shortly.</p>
+          `;
+
+          form.parentNode.appendChild(successMessage);
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch(error => {
+        const errorMessage = document.createElement("div");
+        errorMessage.classList.add("alert", "alert-danger", "text-center", "p-4", "mt-3");
+        errorMessage.innerHTML = `
+          <h3>⚠️ Error</h3>
+          <p>There was an issue submitting your message. Please try again.</p>
+        `;
+        form.parentNode.appendChild(errorMessage);
+      });
+  });
+});
+
